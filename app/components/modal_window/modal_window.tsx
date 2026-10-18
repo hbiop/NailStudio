@@ -1,106 +1,47 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from 'react';
 
-interface BookingModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+interface BookingModalProps { isOpen: boolean; onClose: () => void; }
+interface Slot { id: number; starts_at: string; ends_at: string; }
+const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api';
 
 export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [token, setToken] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [date, setDate] = useState(new Date(Date.now() + 86400000).toISOString().slice(0, 10));
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [slotId, setSlotId] = useState<number>();
+  const [serviceId, setServiceId] = useState(1);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => { setToken(localStorage.getItem('nailstudio_token') ?? ''); }, [isOpen]);
+  useEffect(() => { if (!isOpen || token === '') return; fetch(`${API}/slots?date=${date}`).then(r => r.json()).then(data => { setSlots(data); setSlotId(data[0]?.id); }); }, [isOpen, token, date]);
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSuccess(true);
-
-    setTimeout(() => {
-      onClose();
-      setIsSuccess(false);
-    }, 2000);
+  const submitAuth = async (event: React.FormEvent) => {
+    event.preventDefault(); setError(''); setLoading(true);
+    const endpoint = mode === 'login' ? 'login' : 'register';
+    const body = mode === 'login' ? { email, password } : { name, email, password, password_confirmation: password };
+    const response = await fetch(`${API}/${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await response.json(); setLoading(false);
+    if (!response.ok) { setError(Object.values(data.errors ?? { message: data.message ?? 'Не удалось войти' }).flat().join(' ')); return; }
+    localStorage.setItem('nailstudio_token', data.token); setToken(data.token);
   };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-
-      <div className="bg-[#FBF9F4] w-full max-w-md rounded-3xl p-6 shadow-2xl border border-stone-200 relative">
-
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-stone-400 hover:text-stone-700 transition-colors focus:outline-none"
-          aria-label="Закрыть модальное окно"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        {isSuccess ? (
-          <div className="py-8 text-center space-y-3">
-            <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
-              ✓
-            </div>
-            <h3 className="text-xl font-serif text-stone-900 font-medium">Вы успешно записаны!</h3>
-            <p className="text-sm text-stone-500 font-light">Мы свяжемся с вами для подтверждения визита.</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-
-            <div className="text-center pb-2">
-              <h3 className="text-xl font-serif text-stone-900 tracking-wide font-medium">Онлайн-запись</h3>
-              <p className="text-xs text-stone-400 font-light mt-1">Заполните поля, чтобы забронировать визит</p>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-stone-600 block">Ваше имя</label>
-              <input
-                required
-                type="text"
-                placeholder="Анна"
-                className="w-full text-sm bg-white border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#BC7C5C] text-stone-800 font-light transition-colors"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-stone-600 block">Номер телефона</label>
-              <input
-                required
-                type="tel"
-                placeholder="+7 (999) 000-00-00"
-                className="w-full text-sm bg-white border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#BC7C5C] text-stone-800 font-light transition-colors"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-stone-600 block">Услуга</label>
-              <div className="relative">
-                <select
-                  className="w-full text-sm bg-white border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#BC7C5C] text-stone-700 font-light appearance-none cursor-pointer"
-                >
-                  <option>Комплекс (маникюр + покрытие)</option>
-                  <option>Маникюр без покрытия</option>
-                  <option>Дизайн ногтей (френч, стемпинг)</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-400">
-                  <svg className="fill-current h-4 w-4" xmlns="http://w3.org" viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full mt-2 bg-[#BC7C5C] hover:bg-[#a66a4c] text-white text-sm font-medium py-3 rounded-full shadow-md hover:shadow-lg transition-colors focus:outline-none"
-            >
-              Подтвердить запись
-            </button>
-
-          </form>
-        )}
-      </div>
-    </div>
-  );
+  const submitBooking = async (event: React.FormEvent) => {
+    event.preventDefault(); setError(''); setLoading(true);
+    const response = await fetch(`${API}/bookings`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ slot_id: slotId, service_id: serviceId }) });
+    const data = await response.json(); setLoading(false);
+    if (!response.ok) { setError(data.message ?? 'Окно уже заняли. Обновите список.'); return; }
+    setSuccess(true); setTimeout(() => { setSuccess(false); onClose(); }, 1800);
+  };
+  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"><div className="bg-[#FBF9F4] w-full max-w-md rounded-3xl p-6 shadow-2xl border border-stone-200 relative">
+    <button onClick={onClose} className="absolute top-4 right-4 text-stone-400 text-xl" aria-label="Закрыть">×</button>
+    {success ? <div className="py-8 text-center"><div className="text-emerald-600 text-3xl">✓</div><h3 className="text-xl font-serif mt-3">Вы успешно записаны!</h3><p className="text-sm text-stone-500 mt-2">Ждём вас в салоне.</p></div> : !token ? <form onSubmit={submitAuth} className="space-y-4"><h3 className="text-xl font-serif text-center">{mode === 'login' ? 'Вход для записи' : 'Регистрация'}</h3>{mode === 'register' && <input required value={name} onChange={e => setName(e.target.value)} placeholder="Ваше имя" className="field" />}<input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" className="field" /><input required minLength={8} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Пароль (от 8 символов)" className="field" />{error && <p className="text-sm text-red-600">{error}</p>}<button disabled={loading} className="primary w-full">{loading ? 'Подождите…' : mode === 'login' ? 'Войти' : 'Создать аккаунт'}</button><button type="button" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="text-sm text-stone-500 w-full">{mode === 'login' ? 'Зарегистрироваться' : 'У меня уже есть аккаунт'}</button></form> : <form onSubmit={submitBooking} className="space-y-4"><h3 className="text-xl font-serif text-center">Онлайн-запись</h3><label className="label">Дата<input required type="date" value={date} onChange={e => setDate(e.target.value)} className="field" /></label><label className="label">Свободное окно<select required value={slotId ?? ''} onChange={e => setSlotId(Number(e.target.value))} className="field">{slots.length ? slots.map(slot => <option key={slot.id} value={slot.id}>{new Date(slot.starts_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</option>) : <option value="">Нет свободных окон</option>}</select></label><label className="label">Услуга<select value={serviceId} onChange={e => setServiceId(Number(e.target.value))} className="field"><option value="1">Комплекс (маникюр + покрытие)</option><option value="2">Маникюр без покрытия</option></select></label>{error && <p className="text-sm text-red-600">{error}</p>}<button disabled={loading || !slotId} className="primary w-full">{loading ? 'Бронируем…' : 'Подтвердить запись'}</button></form>}
+  </div></div>;
 }

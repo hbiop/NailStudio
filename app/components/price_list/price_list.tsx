@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function PriceList() {
+export default function PriceList({ onBookClick }: { onBookClick: () => void }) {
   const [activeTab, setActiveTab] = useState<'manicure' | 'pedicure'>('manicure');
 
   const manicureServices = [
@@ -97,7 +97,7 @@ export default function PriceList() {
                 <p className="text-sm text-stone-600 font-light leading-relaxed">{manicureServices[0].description}</p>
                 <div className="text-3xl md:text-4xl font-light text-stone-900 my-6">{manicureServices[0].price}</div>
               </div>
-              <button className="relative z-10 self-start bg-[#BC7C5C] hover:bg-[#a36546] text-white font-medium text-sm px-8 py-3.5 rounded-full transition-all">Быстрая запись</button>
+              <button onClick={onBookClick} className="relative z-10 self-start bg-[#BC7C5C] hover:bg-[#a36546] text-white font-medium text-sm px-8 py-3.5 rounded-full transition-all">Быстрая запись</button>
             </div>
 
             <div className="bg-white border border-stone-200/50 rounded-[28px] p-6 md:p-8">
@@ -145,7 +145,7 @@ export default function PriceList() {
                 <p className="text-sm text-stone-700 font-light leading-relaxed">{pedicureServices[0].description}</p>
                 <div className="text-3xl md:text-4xl font-light text-[#5A6E5D] my-6">{pedicureServices[0].price}</div>
               </div>
-              <button className="relative z-10 self-start bg-[#5A6E5D] hover:bg-[#435346] text-white font-medium text-sm px-8 py-3.5 rounded-full transition-all">Забронировать время</button>
+              <button onClick={onBookClick} className="relative z-10 self-start bg-[#5A6E5D] hover:bg-[#435346] text-white font-medium text-sm px-8 py-3.5 rounded-full transition-all">Забронировать время</button>
             </div>
 
             <div className="bg-gradient-to-b from-white to-[#F4F6F4] border border-stone-200/50 rounded-[28px] p-6 md:p-8">

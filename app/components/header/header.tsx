@@ -2,7 +2,7 @@
 
 import MainButton from "../buttons/main_button";
 
-export default function Header({ onBookClick }: { onBookClick: () => void }) {
+export default function Header({ onLoginClick }: { onLoginClick: () => void }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#FBF9F4] border-b border-stone-200 py-4">
       {/* Изменили flex на grid grid-cols-3 для жесткой центровки */}
@@ -25,7 +25,7 @@ export default function Header({ onBookClick }: { onBookClick: () => void }) {
 
         {/* Правая часть: Кнопка */}
         <div className="flex justify-end">
-          <MainButton onClick={onBookClick} text="Записаться" />
+          <MainButton onClick={onLoginClick} text="Войти" />
         </div>
 
       </div>

@@ -1,0 +1,1 @@
+# NailStudio FastAPI application.

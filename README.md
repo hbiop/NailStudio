@@ -1,36 +1,247 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NailStudio
 
-## Getting Started
+Сайт маникюрного салона с онлайн-записью, авторизацией клиентов и административной панелью.
 
-First, run the development server:
+## Стек
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS
+- **Backend:** Python 3.12, FastAPI, SQLAlchemy, JWT
+- **Database:** PostgreSQL 16
+- **Инфраструктура:** Docker Compose
+
+## Возможности
+
+- регистрация и вход клиента по email и паролю;
+- выбор даты, услуги и свободного временного окна;
+- создание записи с защитой от двойного бронирования;
+- JWT-аутентификация;
+- безопасное хеширование паролей через Argon2;
+- кнопка «Войти» в шапке вместо «Записаться»;
+- личный кабинет пользователя на `/account`;
+- просмотр истории записей и их статусов;
+- персональный блок актуальных акций;
+- админ-панель `/admin`;
+- просмотр записей и управление свободными окнами;
+- подтверждение или отмена записей из админ-панели;
+- сообщение «Нет доступа» для неавторизованных пользователей и клиентов без роли администратора;
+- Swagger-документация API.
+
+## Структура
+
+```text
+NailStudio/
+├── app/                         # Next.js frontend
+│   ├── admin/page.tsx           # админ-панель
+│   ├── components/              # компоненты сайта
+│   └── page.tsx                 # главная страница
+├── backend/                     # FastAPI backend
+│   ├── app/main.py              # точка входа FastAPI
+│   ├── app/models/              # SQLAlchemy-модели
+│   ├── app/routers/             # API-маршруты
+│   ├── app/schemas/             # Pydantic-схемы
+│   ├── requirements.txt
+│   └── Dockerfile
+└── docker-compose.yml           # PostgreSQL + FastAPI
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Требования
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js 20+ и npm;
+- Docker Desktop с Docker Compose.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Python локально устанавливать не нужно, если backend запускается в Docker.
 
-## Learn More
+## Быстрый запуск через Docker Compose
 
-To learn more about Next.js, take a look at the following resources:
+Из корня проекта:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+docker compose up --build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Если контейнеры уже запущены после старой версии backend, перезапустите только backend:
 
-## Deploy on Vercel
+```bash
+docker compose up -d --build backend
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Удалять volume PostgreSQL не требуется.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Compose запускает три сервиса:
+
+1. `postgres` — PostgreSQL 16;
+2. `backend` — FastAPI на порту `8000`;
+3. `frontend` — Next.js на порту `3000`.
+
+При запуске backend автоматически создаёт таблицы и seed-данные, а frontend собирается и запускается в production-режиме.
+
+- Сайт: [http://localhost:3000](http://localhost:3000)
+- API: [http://localhost:8000/api](http://localhost:8000/api)
+- Swagger: [http://localhost:8000/docs](http://localhost:8000/docs)
+- Healthcheck: [http://localhost:8000/health](http://localhost:8000/health)
+
+Frontend получает URL API во время сборки через `NEXT_PUBLIC_API_URL`. Для другого адреса измените `build.args` и `environment` у сервиса `frontend` в `docker-compose.yml`.
+
+Остановка контейнеров:
+
+```bash
+docker compose down
+```
+
+Для пересборки frontend после изменений:
+
+```bash
+docker compose build --no-cache frontend
+docker compose up -d
+```
+
+### Локальный запуск frontend без Docker
+
+Если frontend нужно запускать отдельно:
+
+```bash
+npm install
+npm run dev
+```
+
+По умолчанию он использует `http://localhost:8000/api`. Для другого адреса создайте `.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+```
+
+Остановка контейнеров:
+
+```bash
+docker compose down
+```
+
+Остановка с удалением данных PostgreSQL:
+
+```bash
+docker compose down -v
+```
+
+## Администраторы
+
+При первом запуске автоматически создаётся первый администратор:
+
+```text
+Email:  admin@nailstudio.com
+Пароль: password
+```
+
+Вход в админ-панель: [http://localhost:3000/admin](http://localhost:3000/admin).
+
+Чтобы добавить нового администратора:
+
+1. войдите под существующим администратором;
+2. откройте `/admin`;
+3. в блоке «Добавить администратора» укажите имя, email и пароль;
+4. нажмите «Создать администратора».
+
+Создание доступно только пользователю с ролью администратора. Новый администратор сможет войти через `/account` и открыть `/admin`.
+
+После первого запуска обязательно замените пароль тестового администратора в production. Если база была создана старой версией backend с bcrypt, при следующем запуске backend автоматически обновит пароль системного администратора на значение `ADMIN_PASSWORD` и восстановит ему права администратора.
+
+## API
+
+Защищённые запросы передают JWT:
+
+```http
+Authorization: Bearer <token>
+```
+
+Основные маршруты:
+
+```text
+POST   /api/register
+POST   /api/login
+POST   /api/logout
+GET    /api/me
+GET    /api/services
+GET    /api/slots?date=YYYY-MM-DD
+POST   /api/bookings
+GET    /api/my-bookings
+GET    /api/promotions
+GET    /api/admin/bookings
+POST   /api/admin/users
+POST   /api/admin/slots
+DELETE /api/admin/slots/{id}
+PATCH  /api/admin/bookings/{id}/status
+```
+
+Пример регистрации:
+
+```json
+{
+  "name": "Анна",
+  "email": "anna@example.com",
+  "password": "password123",
+  "password_confirmation": "password123",
+  "phone": "+7 999 000-00-00"
+}
+```
+
+Пример записи:
+
+```json
+{
+  "slot_id": 1,
+  "service_id": 1,
+  "comment": "Предпочтительно нюдовый оттенок"
+}
+```
+
+Доступные статусы записи: `pending`, `confirmed`, `cancelled`.
+
+Акции для кабинета загружаются через `GET /api/promotions`.
+
+Личный кабинет пользователя находится по адресу [http://localhost:3000/account](http://localhost:3000/account). Запись, выбор даты, услуги и свободного окна выполняются внутри кабинета. Все кнопки записи на главной странице ведут в раздел записи кабинета.
+
+Подробное описание backend находится в [`backend/README.md`](backend/README.md).
+
+## Локальный запуск FastAPI без Docker
+
+Если PostgreSQL и Python установлены локально:
+
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+
+В `backend/.env` укажите локальный адрес PostgreSQL, например:
+
+```env
+DATABASE_URL=postgresql+psycopg://nailstudio:secret@localhost:5432/nailstudio
+```
+
+## Проверка
+
+Frontend:
+
+```bash
+npm run lint
+npm run build
+```
+
+Backend:
+
+```bash
+docker compose exec backend python -m compileall app
+docker compose exec backend python -c "from app.main import app; print(app.title)"
+```
+
+## Production
+
+Перед production-развёртыванием необходимо:
+
+- заменить `SECRET_KEY`, `ADMIN_PASSWORD` и пароль PostgreSQL;
+- не публиковать `.env`;
+- ограничить `FRONTEND_URL` фактическим доменом;
+- включить HTTPS;
+- добавить миграции Alembic вместо автоматического `create_all`;
+- настроить email-уведомления и восстановление пароля.

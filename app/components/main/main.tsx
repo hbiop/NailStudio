@@ -10,7 +10,7 @@ export default function MainContent({ onBookClick }: { onBookClick: () => void }
   return (
     <main className="max-w-6xl mx-auto px-4 pt-32">
             <HeroSection onBookClick={onBookClick}></HeroSection>
-            <PriceList></PriceList>
+            <PriceList onBookClick={onBookClick}></PriceList>
             <About></About>
             <LocationSection></LocationSection>
             <Reviews></Reviews>
