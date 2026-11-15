@@ -152,7 +152,7 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
               <h3 className="mb-4 border-b border-[#C9D7C9] pb-3 text-sm font-bold uppercase tracking-wider text-[#435346]">Забота и восстановление</h3>
               <ul className="divide-y divide-stone-100/50">
                 {pedMedServices.map((service, index) => (
-                  <PriceRow key={index} name={service.name} price={service.price} />
+                  <PriceRow key={index} name={service.name} price={service.price} tone="green" />
                 ))}
               </ul>
               <p className="text-[11px] text-stone-400 mt-4 italic font-light">Решаем сложные проблемы стоп профессионально.</p>
@@ -162,7 +162,7 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
               <h3 className="mb-4 border-b border-stone-200 pb-3 text-sm font-bold uppercase tracking-wider text-[#435346]">Эстетика и расслабление</h3>
               <ul className="divide-y divide-stone-50">
                 {pedSpaServices.map((service, index) => (
-                  <PriceRow key={index} name={service.name} price={service.price} />
+                  <PriceRow key={index} name={service.name} price={service.price} tone="green" />
                 ))}
               </ul>
             </div>
@@ -171,7 +171,7 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
               <h3 className="mb-5 border-b border-stone-200 pb-3 text-sm font-bold uppercase tracking-wider text-[#435346]">Классические услуги педикюра</h3>
               <ul className="grid grid-cols-1 gap-x-8 divide-y divide-stone-50 lg:grid-cols-2">
                 {pedicureServices.slice(1).map((service, index) => (
-                  <PriceRow key={index} name={service.name} price={service.price} />
+                  <PriceRow key={index} name={service.name} price={service.price} tone="green" />
                 ))}
               </ul>
             </div>
@@ -183,11 +183,15 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
 
 }
 
-function PriceRow({ name, price, singleLine = false }: { name: string; price: string; singleLine?: boolean }) {
+function PriceRow({ name, price, singleLine = false, tone = 'orange' }: { name: string; price: string; singleLine?: boolean; tone?: 'orange' | 'green' }) {
+  const rowHover = tone === 'green' ? 'hover:bg-[#EAEFEA]' : 'hover:bg-[#F8F1EA]';
+  const nameHover = tone === 'green' ? 'group-hover:text-[#435346]' : 'group-hover:text-stone-950';
+  const priceColor = tone === 'green' ? 'text-[#5A6E5D]' : 'text-[#8C604B]';
+
   return (
-    <li className="group flex min-h-14 min-w-0 items-start justify-between gap-3 rounded-xl border-b border-stone-100 px-3 py-3.5 transition-all duration-200 last:border-b-0 hover:bg-[#F8F1EA] hover:px-4">
-      <span className={`min-w-0 flex-1 pr-2 text-[15px] font-medium leading-6 text-stone-800 transition-colors group-hover:text-stone-950 ${singleLine ? 'truncate whitespace-nowrap' : ''}`}>{name}</span>
-      <span className="shrink-0 whitespace-nowrap text-[15px] font-bold text-[#8C604B] transition-transform duration-200 group-hover:scale-105">{price}</span>
+    <li className={`group flex min-h-14 min-w-0 items-start justify-between gap-3 rounded-xl border-b border-stone-100 px-3 py-3.5 transition-colors duration-200 last:border-b-0 ${rowHover}`}>
+      <span className={`min-w-0 flex-1 pr-2 text-[15px] font-medium leading-6 text-stone-800 transition-colors ${nameHover} ${singleLine ? 'truncate whitespace-nowrap' : ''}`}>{name}</span>
+      <span className={`shrink-0 whitespace-nowrap text-[15px] font-bold transition-transform duration-200 group-hover:scale-105 ${priceColor}`}>{price}</span>
     </li>
   );
 }
