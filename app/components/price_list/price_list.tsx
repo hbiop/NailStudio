@@ -46,31 +46,31 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
   ];
 
   return (
-    <section id="services" className="py-20 bg-[#FBF9F4] text-stone-800 transition-colors duration-500">
-      <div className="max-w-6xl mx-auto px-4">
+    <section id="services" className="bg-[#FBF9F4] py-24 text-stone-900 transition-colors duration-500 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
 
-        <div className="text-center space-y-3 mb-10">
-          <h2 className="text-3xl md:text-4xl font-serif text-stone-900 tracking-wider uppercase">
+        <div className="mb-12 space-y-4 text-center md:mb-14">
+          <h2 className="text-3xl font-serif font-semibold tracking-wide text-stone-950 md:text-4xl">
             Наши услуги и цены
           </h2>
-          <p className="text-sm md:text-base text-stone-500 font-light max-w-md mx-auto leading-relaxed">
+          <p className="mx-auto max-w-lg text-base leading-7 text-stone-700 md:text-lg">
             Профессиональный подход к вашей естественной красоте
           </p>
         </div>
 
-        <div className="flex justify-center gap-2 mb-12">
+        <div className="mb-14 flex justify-center gap-3">
           <button
             onClick={() => setActiveTab('manicure')}
-            className={`px-8 py-3 text-xs md:text-sm uppercase tracking-widest font-semibold transition-all duration-300 border-b-2 ${
-              activeTab === 'manicure' ? 'border-[#BC7C5C] text-[#BC7C5C]' : 'border-transparent text-stone-400'
+            className={`rounded-full border px-7 py-3 text-xs font-semibold uppercase tracking-wider transition-all duration-300 md:px-8 md:text-sm ${
+              activeTab === 'manicure' ? 'border-[#BC7C5C] bg-[#BC7C5C] text-white shadow-md shadow-[#BC7C5C]/25' : 'border-stone-300 bg-white text-stone-700 hover:border-[#BC7C5C] hover:bg-[#F4EDE4] hover:text-stone-950'
             }`}
           >
             Маникюр
           </button>
           <button
             onClick={() => setActiveTab('pedicure')}
-            className={`px-8 py-3 text-xs md:text-sm uppercase tracking-widest font-semibold transition-all duration-300 border-b-2 ${
-              activeTab === 'pedicure' ? 'border-[#5A6E5D] text-[#5A6E5D]' : 'border-transparent text-stone-400'
+            className={`rounded-full border px-7 py-3 text-xs font-semibold uppercase tracking-wider transition-all duration-300 md:px-8 md:text-sm ${
+              activeTab === 'pedicure' ? 'border-[#5A6E5D] bg-[#5A6E5D] text-white shadow-md shadow-[#5A6E5D]/25' : 'border-stone-300 bg-white text-stone-700 hover:-translate-y-0.5 hover:border-[#5A6E5D] hover:bg-[#D8E2D7] hover:text-[#435346] hover:shadow-md hover:shadow-[#5A6E5D]/25'
             }`}
           >
             Педикюр
@@ -78,8 +78,8 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
         </div>
 
         {activeTab === 'manicure' ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fadeIn">
-            <div className="md:col-span-2 border border-stone-200/60 rounded-[28px] p-6 md:p-8 flex flex-col justify-between relative overflow-hidden min-h-[380px] md:min-h-[420px] group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-900/5">
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-5 animate-fadeIn">
+            <div className="md:col-span-2 lg:col-span-3 border border-stone-300/80 rounded-[28px] p-7 md:p-9 flex flex-col justify-between relative overflow-hidden min-h-[380px] md:min-h-[420px] group transition-all duration-300 hover:-translate-y-1 hover:border-[#BC7C5C] hover:shadow-xl hover:shadow-[#BC7C5C]/15">
               <div className="absolute inset-0 z-0">
                 <img
                   src="/nails_2.jpeg"
@@ -100,8 +100,8 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
               <button onClick={onBookClick} className="relative z-10 self-start bg-[#BC7C5C] hover:bg-[#a36546] text-white font-medium text-sm px-8 py-3.5 rounded-full transition-all">Быстрая запись</button>
             </div>
 
-            <div className="bg-white border border-stone-200/50 rounded-[28px] p-6 md:p-8">
-              <h3 className="text-xs font-bold tracking-widest text-[#BC7C5C] uppercase border-b border-stone-100 pb-3 mb-2">Дизайн ногтей</h3>
+            <div className="rounded-[28px] border border-stone-300/80 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#BC7C5C] hover:shadow-lg hover:shadow-[#BC7C5C]/10 md:col-span-2 lg:col-span-2 md:p-8">
+              <h3 className="mb-4 border-b border-stone-200 pb-3 text-sm font-bold uppercase tracking-wider text-[#8C604B]">Дизайн ногтей</h3>
               <ul className="divide-y divide-stone-50">
                 {designServices.map((service, index) => (
                   <PriceRow key={index} name={service.name} price={service.price} />
@@ -109,9 +109,9 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
               </ul>
             </div>
 
-            <div className="md:col-span-3 bg-white border border-stone-200/50 rounded-[28px] p-6 md:p-8">
-              <h3 className="text-xs font-bold tracking-widest text-[#BC7C5C] uppercase border-b border-stone-100 pb-3 mb-4">Базовый уход и снятие</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12">
+            <div className="md:col-span-2 lg:col-span-5 rounded-[28px] border border-stone-300/80 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#BC7C5C] hover:shadow-lg hover:shadow-[#BC7C5C]/10 md:p-8">
+              <h3 className="mb-5 border-b border-stone-200 pb-3 text-sm font-bold uppercase tracking-wider text-[#8C604B]">Базовый уход и снятие</h3>
+              <div className="grid grid-cols-1 gap-x-12 lg:grid-cols-2">
                 <ul className="divide-y divide-stone-50">
                   {manicureServices.slice(1, 5).map((service, index) => (
                     <PriceRow key={index} name={service.name} price={service.price} />
@@ -126,8 +126,8 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fadeIn">
-            <div className="md:col-span-2 border border-stone-200/40 rounded-[28px] p-6 md:p-8 flex flex-col justify-between relative overflow-hidden min-h-[380px] md:min-h-[420px] group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-900/5">
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3 animate-fadeIn">
+            <div className="md:col-span-2 rounded-[28px] border border-stone-300/80 p-7 md:p-9 flex flex-col justify-between relative overflow-hidden min-h-[380px] md:min-h-[420px] group transition-all duration-300 hover:-translate-y-1 hover:border-[#5A6E5D] hover:shadow-xl hover:shadow-[#5A6E5D]/15">
               <div className="absolute inset-0 z-0">
                 <img
                   src="/nails_1.jpeg"
@@ -148,8 +148,8 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
               <button onClick={onBookClick} className="relative z-10 self-start bg-[#5A6E5D] hover:bg-[#435346] text-white font-medium text-sm px-8 py-3.5 rounded-full transition-all">Забронировать время</button>
             </div>
 
-            <div className="bg-gradient-to-b from-white to-[#F4F6F4] border border-stone-200/50 rounded-[28px] p-6 md:p-8">
-              <h3 className="text-xs font-bold tracking-widest text-[#5A6E5D] uppercase border-b border-[#D8E2D7] pb-3 mb-2">Забота и Восстановление</h3>
+            <div className="rounded-[28px] border border-[#C9D7C9] bg-gradient-to-b from-white to-[#F4F6F4] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#5A6E5D] hover:shadow-lg hover:shadow-[#5A6E5D]/10 md:p-8">
+              <h3 className="mb-4 border-b border-[#C9D7C9] pb-3 text-sm font-bold uppercase tracking-wider text-[#435346]">Забота и восстановление</h3>
               <ul className="divide-y divide-stone-100/50">
                 {pedMedServices.map((service, index) => (
                   <PriceRow key={index} name={service.name} price={service.price} />
@@ -158,8 +158,8 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
               <p className="text-[11px] text-stone-400 mt-4 italic font-light">Решаем сложные проблемы стоп профессионально.</p>
             </div>
 
-            <div className="bg-white border border-stone-200/50 rounded-[28px] p-6 md:p-8">
-              <h3 className="text-xs font-bold tracking-widest text-[#5A6E5D] uppercase border-b border-stone-100 pb-3 mb-2">Эстетика и Расслабление</h3>
+            <div className="rounded-[28px] border border-stone-300/80 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#5A6E5D] hover:shadow-lg hover:shadow-[#5A6E5D]/10 md:p-8">
+              <h3 className="mb-4 border-b border-stone-200 pb-3 text-sm font-bold uppercase tracking-wider text-[#435346]">Эстетика и расслабление</h3>
               <ul className="divide-y divide-stone-50">
                 {pedSpaServices.map((service, index) => (
                   <PriceRow key={index} name={service.name} price={service.price} />
@@ -167,9 +167,9 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
               </ul>
             </div>
 
-            <div className="md:col-span-2 bg-white border border-stone-200/50 rounded-[28px] p-6 md:p-8">
-              <h3 className="text-xs font-bold tracking-widest text-[#5A6E5D] uppercase border-b border-stone-100 pb-3 mb-4">Классические услуги педикюра</h3>
-              <ul className="divide-y divide-stone-50 grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+            <div className="md:col-span-2 rounded-[28px] border border-stone-300/80 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#5A6E5D] hover:shadow-lg hover:shadow-[#5A6E5D]/10 md:p-8">
+              <h3 className="mb-5 border-b border-stone-200 pb-3 text-sm font-bold uppercase tracking-wider text-[#435346]">Классические услуги педикюра</h3>
+              <ul className="grid grid-cols-1 gap-x-8 divide-y divide-stone-50 lg:grid-cols-2">
                 {pedicureServices.slice(1).map((service, index) => (
                   <PriceRow key={index} name={service.name} price={service.price} />
                 ))}
@@ -183,11 +183,11 @@ export default function PriceList({ onBookClick }: { onBookClick: () => void }) 
 
 }
 
-function PriceRow({ name, price }: { name: string; price: string }) {
+function PriceRow({ name, price, singleLine = false }: { name: string; price: string; singleLine?: boolean }) {
   return (
-    <li className="flex justify-between items-baseline py-3.5 group">
-      <span className="text-sm font-light text-stone-600 group-hover:text-stone-950 transition-colors pr-4 leading-tight">{name}</span>
-      <span className="text-sm font-semibold text-stone-900 whitespace-nowrap">{price}</span>
+    <li className="group flex min-h-14 min-w-0 items-start justify-between gap-3 rounded-xl border-b border-stone-100 px-3 py-3.5 transition-all duration-200 last:border-b-0 hover:bg-[#F8F1EA] hover:px-4">
+      <span className={`min-w-0 flex-1 pr-2 text-[15px] font-medium leading-6 text-stone-800 transition-colors group-hover:text-stone-950 ${singleLine ? 'truncate whitespace-nowrap' : ''}`}>{name}</span>
+      <span className="shrink-0 whitespace-nowrap text-[15px] font-bold text-[#8C604B] transition-transform duration-200 group-hover:scale-105">{price}</span>
     </li>
   );
 }
